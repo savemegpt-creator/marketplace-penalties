@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { MOCK_TOPICS } from '@/data/penalties';
 import { Marketplace, UserRole } from '@/types';
 import PenaltyCard from '@/components/PenaltyCard';
@@ -56,13 +57,13 @@ export default function Home() {
                 className="text-xs bg-slate-100 border border-slate-200 rounded-lg px-3.5 py-2 w-full md:w-64 outline-none focus:border-blue-500 focus:bg-white transition-all"
               />
 
-              {/* Кнопка предложки постов */}
-              <button
-                onClick={() => alert('Форма предложки: прикрепите сумму, маркетплейс и текст жалобы.')}
+              {/* Кнопка предложки постов, ведущая на страницу /submit */}
+              <Link
+                href="/submit"
                 className="whitespace-nowrap text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors shadow-xs flex items-center gap-1.5"
               >
                 <span>+ Предложить штраф</span>
-              </button>
+              </Link>
             </div>
           </div>
         </header>
