@@ -1,6 +1,7 @@
 export type Marketplace = 'wb' | 'ozon' | 'all';
 
-export type UserRole = 'pvz' | 'seller' | 'warehouse' | 'courier';
+// Расширенные роли с учетом Ozon Job и дарксторов
+export type UserRole = 'seller' | 'pvz' | 'warehouse' | 'job_worker' | 'courier_darkstore';
 
 export type DisputeStatus = 'resolved_full' | 'resolved_partial' | 'in_progress' | 'rejected';
 
@@ -15,9 +16,11 @@ export interface PenaltyCase {
   recoveredAmount?: number;
   status: DisputeStatus;
   date: string;
-  clause: string; // пункт оферты или регламента
+  clause: string; // Пункт оферты или статья закона (например, ст. 14.69 КоАП РФ)
+  lawReference?: string; // Ссылка на ФЗ № 289-ФЗ / 295-ФЗ / КоАП РФ
   solutionSteps: string[];
   documentsRequired: string[];
+  templateDownloadUrl?: string; // Ссылка на скачивание шаблона претензии (.docx)
   viewsCount: number;
   commentsCount: number;
 }
