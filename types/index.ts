@@ -1,26 +1,24 @@
 export type Marketplace = 'wb' | 'ozon' | 'all';
 
-// Расширенные роли с учетом Ozon Job и дарксторов
 export type UserRole = 'seller' | 'pvz' | 'warehouse' | 'job_worker' | 'courier_darkstore';
 
-export type DisputeStatus = 'resolved_full' | 'resolved_partial' | 'in_progress' | 'rejected';
+// Народный вердикт от участников форума
+export type CommunityVerdict = 'can_dispute' | 'hard_case' | 'useless' | 'needs_advice';
 
-export interface PenaltyCase {
+export interface ForumTopic {
   id: string;
   slug: string;
-  title: string;
-  description: string;
+  authorTag: string; // Например: @ivan_fbo, Анонимный сборщик, ПВЗ Казань
   marketplace: 'wb' | 'ozon';
   role: UserRole;
+  title: string;
+  situation: string; // Описание своими словами, как в предложке
   penaltyAmount: number;
-  recoveredAmount?: number;
-  status: DisputeStatus;
   date: string;
-  clause: string; // Пункт оферты или статья закона (например, ст. 14.69 КоАП РФ)
-  lawReference?: string; // Ссылка на ФЗ № 289-ФЗ / 295-ФЗ / КоАП РФ
-  solutionSteps: string[];
-  documentsRequired: string[];
-  templateDownloadUrl?: string; // Ссылка на скачивание шаблона претензии (.docx)
-  viewsCount: number;
-  commentsCount: number;
+  verdict: CommunityVerdict;
+  upvotesUnfair: number; // «Беспредел площадки»
+  upvotesFair: number;   // «Сам виноват / по делу»
+  answersCount: number;  // Количество комментариев с советами
+  hasProofImage?: boolean; // Есть ли прикрепленный скриншот удержания
+  topAdvicePreview?: string; // Самый залайканный совет из ветки
 }
