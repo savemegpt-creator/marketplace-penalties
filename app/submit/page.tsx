@@ -10,12 +10,46 @@ export default function SubmitCasePage() {
   const [title, setTitle] = useState('');
   const [story, setStory] = useState('');
   const [contact, setContact] = useState('');
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Логика отправки: пока выводим экран подтверждения
-    setIsSubmitted(true);
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      // Формируем объект новой истории
+      const newSubmission = {
+        id: Date.now().toString(),
+        platform,
+        role,
+        title,
+        penalty_amount: penaltyAmount ? Number(penaltyAmount) : null,
+        story,
+        contact: contact || null,
+        created_at: new Date().toISOString(),
+        status: 'pending',
+      };
+
+      // Достаем существующие истории из localStorage или создаем пустой массив
+      const existingSubmissions = JSON.parse(localStorage.getItem('submissions') || '[]');
+      
+      // Добавляем новую историю в начало списка
+      localStorage.setItem('submissions', JSON.stringify([newSubmission, ...existingSubmissions]));
+
+      // Имитируем небольшую задержку для плавности интерфейса
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      setIsSubmitted(true);
+    } catch (err: any) {
+      console.error('Ошибка:', err);
+      setErrorMessage('Не удалось сохранить историю локально.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -46,10 +80,10 @@ export default function SubmitCasePage() {
                   ✓
                 </div>
                 <h2 className="text-lg font-bold text-slate-900 mb-2">
-                  Штраф отправлен в предложку
+                  Штраф успешно отправлен в предложку
                 </h2>
                 <p className="text-xs text-slate-600 max-w-md mx-auto mb-6 leading-relaxed">
-                  История появится в общей ленте после быстрой антиспам-проверки. Если оставили контакт, пришлем ссылку на публикацию.
+                  История сохранена в локальной памяти браузера. После модерации она отобразится на главной странице.
                 </p>
                 <Link
                   href="/"
@@ -68,6 +102,12 @@ export default function SubmitCasePage() {
                     Анонимно или с контактом. Коллеги по площадке подскажут, реально ли отбить удержание и что отвечать поддержке.
                   </p>
                 </div>
+
+                {errorMessage && (
+                  <div className="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg">
+                    {errorMessage}
+                  </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   {/* Выбор маркетплейса */}
@@ -126,7 +166,6 @@ export default function SubmitCasePage() {
                     </label>
                     <input
                       type="number"
-                      required
                       placeholder="Например: 45000"
                       value={penaltyAmount}
                       onChange={(e) => setPenaltyAmount(e.target.value)}
@@ -182,12 +221,13 @@ export default function SubmitCasePage() {
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg transition-colors shadow-xs"
+                      disabled={isLoading}
+                      className="w-full text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 px-4 rounded-lg transition-colors shadow-xs"
                     >
-                      Отправить на публикацию
+                      {isLoading ? 'Сохранение...' : 'Отправить на публикацию'}
                     </button>
                     <p className="text-[11px] text-slate-400 text-center mt-2">
-                      Личные данные и номера договоров удаляются автоматически
+                      Данные сохраняются локально на вашем устройстве
                     </p>
                   </div>
                 </form>
